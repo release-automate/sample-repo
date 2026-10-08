@@ -4,7 +4,7 @@ const app  = express();
 const PORT = process.env.PORT ?? 3001;
 
 app.use(express.json());
-
+// avatar support
 // ── In-memory user store (POC only) ───────────────────────────
 interface User {
   id:        number;
