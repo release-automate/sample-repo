@@ -1,0 +1,54 @@
+name: Deploy
+
+# Runs when a release branch is pushed.
+# The actual deploy step runs here (your real deploy command goes in step 3).
+# After deploy succeeds, the release-automation workflow (Flow 4) fires
+# automatically via the same push event and moves JIRA tickets to Accepted.
+
+on:
+  push:
+    branches:
+      - 'release/**'
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Run tests before deploy
+        run: pnpm test
+
+      # ── Replace this step with your actual deploy command ──────────────────
+      # Examples:
+      #   AWS ECS:   aws ecs update-service ...
+      #   Heroku:    git push heroku main
+      #   Docker:    docker build & push
+      #   k8s:       kubectl set image ...
+      - name: Deploy
+        run: |
+          echo "🚀 Deploying ${{ github.ref_name }} to production..."
+          echo "Replace this step with your real deploy command."
+          echo "Deploy complete."
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ ${{ github.ref_name }} deployed successfully"
+          echo "Flow 4 (JIRA → Accepted) will run automatically via the release-automation workflow."

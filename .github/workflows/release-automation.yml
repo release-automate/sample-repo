@@ -1,0 +1,63 @@
+name: Release Automation
+
+# ─────────────────────────────────────────────────────────────────────────────
+# This is the ONLY file this repo needs for full release automation.
+# All logic lives in YOUR_ORG/release-automation (the hub repo).
+#
+# Flows handled:
+#   Flow 1 — feature/* or defect/* branch created  → JIRA ticket "In Progress"
+#   Flow 2 — PR merged to main                     → JIRA ticket "Ready for Testing"
+#   Flow 4 — push to release/**                    → JIRA tickets "Accepted"
+# ─────────────────────────────────────────────────────────────────────────────
+
+on:
+  create:                         # Flow 1 — any branch or tag created
+
+  pull_request:                   # Flow 2 — PR closed against main
+    types: [closed]
+    branches: [main]
+
+  push:                           # Flow 4 — release branch pushed/deployed
+    branches:
+      - 'release/**'
+
+jobs:
+
+  # ── Flow 1: Branch created → JIRA In Progress ──────────────────────────────
+  on-branch-created:
+    name: "Flow 1 — In Progress"
+    if: github.event_name == 'create'
+    uses: YOUR_ORG/release-automation/.github/workflows/branch-automation.yml@main
+    with:
+      branch_name: ${{ github.ref_name }}
+      ref_type:    ${{ github.event.ref_type }}
+      repo_name:   ${{ github.repository }}
+    secrets: inherit
+
+  # ── Flow 2: PR merged to main → JIRA Ready for Testing ─────────────────────
+  on-pr-merged:
+    name: "Flow 2 — Ready for Testing"
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true
+    uses: YOUR_ORG/release-automation/.github/workflows/pr-automation.yml@main
+    with:
+      pr_number:   ${{ github.event.pull_request.number }}
+      pr_title:    ${{ github.event.pull_request.title }}
+      pr_body:     ${{ github.event.pull_request.body || '' }}
+      pr_merged:   ${{ github.event.pull_request.merged }}
+      base_branch: ${{ github.event.pull_request.base.ref }}
+      repo_name:   ${{ github.repository }}
+    secrets: inherit
+
+  # ── Flow 4: Release branch deployed → JIRA Accepted ────────────────────────
+  on-release-deploy:
+    name: "Flow 4 — Accepted"
+    if: >
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/heads/release/')
+    uses: YOUR_ORG/release-automation/.github/workflows/deploy-automation.yml@main
+    with:
+      ref:       ${{ github.ref }}
+      repo_name: ${{ github.repository }}
+    secrets: inherit
