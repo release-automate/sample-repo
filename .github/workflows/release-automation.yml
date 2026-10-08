@@ -27,7 +27,7 @@ jobs:
   on-branch-created:
     name: "Flow 1 — In Progress"
     if: github.event_name == 'create'
-    uses: YOUR_ORG/release-automation/.github/workflows/branch-automation.yml@main
+    uses: release-automate/release-automation/.github/workflows/branch-automation.yml@main
     with:
       branch_name: ${{ github.ref_name }}
       ref_type:    ${{ github.event.ref_type }}
@@ -40,7 +40,7 @@ jobs:
     if: >
       github.event_name == 'pull_request' &&
       github.event.pull_request.merged == true
-    uses: YOUR_ORG/release-automation/.github/workflows/pr-automation.yml@main
+    uses: release-automate/release-automation/.github/workflows/pr-automation.yml@main
     with:
       pr_number:   ${{ github.event.pull_request.number }}
       pr_title:    ${{ github.event.pull_request.title }}
@@ -56,7 +56,7 @@ jobs:
     if: >
       github.event_name == 'push' &&
       startsWith(github.ref, 'refs/heads/release/')
-    uses: YOUR_ORG/release-automation/.github/workflows/deploy-automation.yml@main
+    uses: release-automate/release-automation/.github/workflows/deploy-automation.yml@main
     with:
       ref:       ${{ github.ref }}
       repo_name: ${{ github.repository }}
