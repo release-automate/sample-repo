@@ -68,7 +68,7 @@ jobs:
     if: >
       github.event_name == 'pull_request' &&
       github.event.action != 'closed'
-    uses: YOUR_ORG/release-automation/.github/workflows/pr-validate.yml@main
+    uses: release-automate/release-automation/.github/workflows/pr-validate.yml@main
     with:
       pr_number: ${{ github.event.pull_request.number }}
       pr_title:  ${{ github.event.pull_request.title }}
