@@ -47,6 +47,7 @@ jobs:
       pr_body:     ${{ github.event.pull_request.body || '' }}
       pr_merged:   ${{ github.event.pull_request.merged }}
       base_branch: ${{ github.event.pull_request.base.ref }}
+      head_branch: ${{ github.event.pull_request.head.ref }}
       repo_name:   ${{ github.repository }}
     secrets: inherit
 
