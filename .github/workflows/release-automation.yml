@@ -13,20 +13,22 @@ name: Release Automation
 on:
   create:                         # Flow 1 — any branch or tag created
 
-  pull_request:                   # Flow 2 — PR is opened/closed/synchronize against main
-    types: 
+  pull_request:                   # Flow 2 — PR is opened/synchronize against main/release branch
+    types:                        # Flow 5 - PR is merged to main from release branch
       - opened          
-      - synchronize     
-      - closed
-    branches: [main]
+      - synchronize    
+      - closed 
+    branches: 
+      - 'release.**'
+      - 'main'
 
-  push:                           # Flow 4 — release branch pushed/deployed
+  push:                           # Flow 3 — release branch pushed/deployed
     branches:
-      - 'release/**'
+      - 'release.**'
 
 jobs:
 
-  # ── Flow 1: Branch created → JIRA In Progress ──────────────────────────────
+  # Flow 1: Branch created → JIRA In Progress 
   on-branch-created:
     name: "Flow 1 — In Progress"
     if: github.event_name == 'create'
@@ -36,39 +38,10 @@ jobs:
       ref_type:    ${{ github.event.ref_type }}
       repo_name:   ${{ github.repository }}
     secrets: inherit
-
-  # ── Flow 2: PR merged to main → JIRA Ready for Testing ─────────────────────
-  on-pr-merged:
-    name: "Flow 2 — Ready for Testing"
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.merged == true
-    uses: release-automate/release-automation/.github/workflows/pr-automation.yml@main
-    with:
-      pr_number:   ${{ github.event.pull_request.number }}
-      pr_title:    ${{ github.event.pull_request.title }}
-      pr_body:     ${{ github.event.pull_request.body || '' }}
-      pr_merged:   ${{ github.event.pull_request.merged }}
-      base_branch: ${{ github.event.pull_request.base.ref }}
-      head_branch: ${{ github.event.pull_request.head.ref }}
-      repo_name:   ${{ github.repository }}
-    secrets: inherit
-
-  # ── Flow 4: Release branch deployed → JIRA Accepted ────────────────────────
-  on-release-deploy:
-    name: "Flow 4 — Accepted"
-    if: >
-      github.event_name == 'push' &&
-      startsWith(github.ref, 'refs/heads/release/')
-    uses: release-automate/release-automation/.github/workflows/deploy-automation.yml@main
-    with:
-      ref:       ${{ github.ref }}
-      repo_name: ${{ github.repository }}
-    secrets: inherit
-
-  # ── Flow 5: Validate JIRA ticket BEFORE merge is allowed ───────────────────
+    
+  # Flow 2: Validate JIRA ticket When PR is created
   validate-ticket:
-    name: "Flow 5 — Validate JIRA ticket"
+    name: "Flow 2 — Validate JIRA ticket"
     if: >
       github.event_name == 'pull_request' &&
       (github.event.action == 'opened' ||
@@ -79,4 +52,33 @@ jobs:
       pr_title:  ${{ github.event.pull_request.title }}
       pr_body:   ${{ github.event.pull_request.body || '' }}
       repo_name: ${{ github.repository }}
+    secrets: inherit
+
+  # ── Flow 3: Release branch deployed → JIRA Ready For Testing ────────────────────────
+  on-release-deploy:
+    name: "Flow 3 — Ready for Testing"
+    if: >
+      github.event_name == 'push' &&
+      startsWith(github.ref, 'refs/heads/release.')
+    uses: release-automate/release-automation/.github/workflows/deploy-automation.yml@main
+    with:
+      ref:       ${{ github.ref }}
+      repo_name: ${{ github.repository }}
+    secrets: inherit
+
+  # Flow 5: PR merged to Main Branch from Release Branch → JIRA Accepted 
+  on-pr-merged:
+    name: "Flow 5 — Accepted"
+    if: >
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    uses: release-automate/release-automation/.github/workflows/pr-automation.yml@main
+    with:
+      pr_number:   ${{ github.event.pull_request.number }}
+      pr_title:    ${{ github.event.pull_request.title }}
+      pr_body:     ${{ github.event.pull_request.body || '' }}
+      pr_merged:   ${{ github.event.pull_request.merged }}
+      base_branch: ${{ github.event.pull_request.base.ref }}
+      head_branch: ${{ github.event.pull_request.head.ref }}
+      repo_name:   ${{ github.repository }}
     secrets: inherit
