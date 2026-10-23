@@ -1,14 +1,14 @@
 name: Deploy
 
 # Runs when a release branch is pushed.
-# The actual deploy step runs here (your real deploy command goes in step 3).
-# After deploy succeeds, the release-automation workflow (Flow 4) fires
-# automatically via the same push event and moves JIRA tickets to Accepted.
+# The actual deploy step runs here (your real deploy command goes in step 2).
+# After deploy succeeds, the release-automation workflow (Flow 3) fires
+# automatically via the same push event and moves JIRA tickets to Ready for Testing.
 
 on:
   push:
     branches:
-      - 'release/**'
+      - 'release.**'
 
 jobs:
   deploy:
@@ -51,4 +51,4 @@ jobs:
         if: success()
         run: |
           echo "✅ ${{ github.ref_name }} deployed successfully"
-          echo "Flow 4 (JIRA → Accepted) will run automatically via the release-automation workflow."
+          echo "Flow 3 (JIRA → Ready for Testing) will run automatically via the release-automation workflow."

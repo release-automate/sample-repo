@@ -6,8 +6,9 @@ name: Release Automation
 #
 # Flows handled:
 #   Flow 1 — feature/* or defect/* branch created  → JIRA ticket "In Progress"
-#   Flow 2 — PR merged to main                     → JIRA ticket "Ready for Testing"
-#   Flow 4 — push to release/**                    → JIRA tickets "Accepted"
+#   Flow 2 - PR is opened against release. branch  → Validate JIRA ticket
+#   Flow 3 — push to release. branch               → JIRA ticket "Ready for Testing"
+#   Flow 5 — PR merged to main branch              → JIRA tickets "Accepted"
 # ─────────────────────────────────────────────────────────────────────────────
 
 on:
