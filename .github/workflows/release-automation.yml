@@ -72,7 +72,7 @@ jobs:
     name: "Flow 5 — Accepted"
     if: >
       github.event_name == 'pull_request' &&
-      github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+      github.event.pull_request.merged == true
     uses: release-automate/release-automation/.github/workflows/pr-automation.yml@main
     with:
       pr_number:   ${{ github.event.pull_request.number }}
