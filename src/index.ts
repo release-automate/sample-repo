@@ -15,6 +15,7 @@ interface User {
 const users: User[] = [
   { id: 1, name: 'Alice',   email: 'alice@example.com',   createdAt: '2024-01-01' },
   { id: 2, name: 'Bob',     email: 'bob@example.com',     createdAt: '2024-02-15' },
+  { id: 2, name: 'Charle',     email: 'charle@example.com',     createdAt: '2024-03-15' },
 ];
 
 // ── Routes ─────────────────────────────────────────────────────
