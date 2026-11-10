@@ -51,7 +51,7 @@ app.post('/users', (req, res) => {
 app.post('/send-otp', (req, res) => {
   const response = {
     message: "OTP Sent successfully"
-  }
+  };
   res.status(201).json(response);
 });
 
