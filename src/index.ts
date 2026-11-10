@@ -54,6 +54,14 @@ app.post('/send-otp', (req, res) => {
   res.status(201).json(response);
 });
 
+app.get('/mfa', (req, res) => {
+  const response = [{
+    type: "email"
+    status: "active"
+  }]
+  res.status(200).json(response);
+});
+
 app.listen(PORT, () => {
   console.log(`user-service running on :${PORT}`);
 });
