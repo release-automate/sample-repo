@@ -47,6 +47,12 @@ app.post('/users', (req, res) => {
   users.push(user);
   res.status(201).json(user);
 });
+app.post('/send-otp', (req, res) => {
+  const response = {
+    message: "OTP Sent successfully"
+  }
+  res.status(201).json(response);
+});
 
 app.listen(PORT, () => {
   console.log(`user-service running on :${PORT}`);
