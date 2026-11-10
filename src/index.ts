@@ -47,6 +47,7 @@ app.post('/users', (req, res) => {
   users.push(user);
   res.status(201).json(user);
 });
+
 app.post('/send-otp', (req, res) => {
   const response = {
     message: "OTP Sent successfully"
@@ -56,7 +57,7 @@ app.post('/send-otp', (req, res) => {
 
 app.get('/mfa', (req, res) => {
   const response = [{
-    type: "email"
+    type: "email",
     status: "active"
   }]
   res.status(200).json(response);
